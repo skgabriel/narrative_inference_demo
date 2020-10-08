@@ -9,7 +9,7 @@ from text_utils import TextEncoder
 import pickle
 import numpy as np
 from transformers import GPT2Tokenizer
-from transformer_models import GPT2Model, GPT2LMHeadModel, GPT2MemModel
+from src.transformer_models import GPT2Model, GPT2LMHeadModel, GPT2MemModel
 import random
 from sklearn.utils import shuffle
 
