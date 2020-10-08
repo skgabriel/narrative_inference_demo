@@ -10,12 +10,16 @@ To install all requirements, run pip install -r requirements.txt
 
 Data Format 
 
-The code assumes the input text is in the following format:
+The code assumes the input text is in a json-formatted file with the following keys:
+
+'id': unique id for each narrative
+'full_context': the narrative split into a list of sentences 
+
 
 Generation
 
-Para-M: python generate.py --model_path /path/to/modeldir/ --model_type 'nomem' --beam 10 --source 
-Para-M (mem): python generate.py --model_path /path/to/modeldir/ --model_type 'mem' --beam 10 --source 
+Para-M: python generate.py --model_path /path/to/modeldir/ --model_type 'nomem' --decoding beam --beam 10 --source example.jsonl
+Para-M (mem): python generate.py --model_path /path/to/modeldir/ --model_type 'mem' --decoding beam --beam 10 --source example.jsonl 
 
 Citing 
 
