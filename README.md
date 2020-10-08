@@ -1,7 +1,5 @@
 Demo
 
-A running demo of our model can be found here. 
-
 Please download pretrained weights beforehand. 
 
 Requirements
