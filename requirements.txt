@@ -1,0 +1,4 @@
+numpy
+spacy
+nltk
+transformers==2.4.0
