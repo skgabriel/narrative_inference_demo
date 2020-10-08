@@ -5,13 +5,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import argparse
-from text_utils import TextEncoder
-import pickle
 import numpy as np
 from transformers import GPT2Tokenizer
+from src.text_utils import TextEncoder
 from src.transformer_models import GPT2Model, GPT2LMHeadModel, GPT2MemModel
 import random
-from sklearn.utils import shuffle
 
 
 if __name__ == '__main__':
