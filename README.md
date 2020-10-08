@@ -11,6 +11,7 @@ Data Format
 The code assumes the input text is in a json-formatted file with the following keys:
 
 'id': unique id for each narrative
+
 'full_context': the narrative split into a list of sentences 
 
 
