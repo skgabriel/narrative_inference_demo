@@ -4,6 +4,8 @@ Please download pretrained weights beforehand.
 
 Requirements
 
+python 3.6
+
 To install all requirements, run pip install -r requirements.txt
 
 Data Format 
