@@ -108,9 +108,9 @@ n_gpu = 1
 print("device", device, "n_gpu", n_gpu)
 gen_len = 50
 
-def topk(model, XMB,i, n=1,num_beams=args.beam, mem=None):
+def topk(model, XMB,i, n=1,k=args.beam, mem=None,use_pointer=None,use_scores=None,size_mem=0):
     import copy
-    gen = torch.Tensor([encoder['<|PAD|>']] * gen_len).long().to(device)
+    gen = torch.Tensor([encoder['<|PAD|>']] * gen_len).long().to(device) #torch.zeros((gen_len)).long().to(device)
     prob = 0
     for step in range(gen_len):
         if encoder['<|endoftext|>'] in gen:
@@ -123,11 +123,13 @@ def topk(model, XMB,i, n=1,num_beams=args.beam, mem=None):
         if mem == None:
            logits, _ =  model(XMB[:,:i+1+step])
         else:
-           logits, _ =  model(XMB[:,:i+1+step],update_mem=mem,clear_mem=clear_mem,use_pointer=False, use_scores=False,mem_k=1,use_mem=use_mem)
+           if step != 0:
+              mem = None
+           logits, _ =  model(XMB[:,:i+1+step],update_mem=mem,clear_mem=clear_mem,use_mem=use_mem,size_mem=size_mem)
         logits = torch.nn.functional.softmax(logits, dim=-1)
         logits = logits[:,i+step].squeeze(1)
         values, indices  = logits.sort(descending=True)
-        next_indices = indices[:, :num_beams].gather(-1, torch.multinomial(values[:, :num_beams], 1))
+        next_indices = indices[:, :k].gather(-1, torch.multinomial(values[:, :k], 1))
         gen[step] = next_indices.view(-1).long() 
         prob += float(values[:,int(gen[step])])
     return [gen]
@@ -181,7 +183,7 @@ class BeamHypotheses(object):
             ret = self.worst_score >= cur_score
             return ret
 
-def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperature=1, pad_token_id=encoder['<|PAD|>'], eos_token_ids=[encoder['<|endoftext|>']], length_penalty=1,mem=None):
+def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperature=1, pad_token_id=encoder['<|PAD|>'], eos_token_ids=[encoder['<|endoftext|>']], length_penalty=1,mem=None,size_mem=0,use_mem=False):
     """ Generate sequences for each example with beam search.
     """
 
@@ -209,15 +211,20 @@ def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperatu
        mem = mem.expand_as(torch.zeros(num_beams, mem.size(1),mem.size(2)))
     XMB = XMB.expand_as(torch.zeros(num_beams,XMB.size(1)))
     while step < max_length:
-        if step == 0:
+        if step == 0 and use_mem:
            clear_mem = True
         else:
            clear_mem = False
 
         if mem == None:
-           outputs = model(XMB)  # (batch_size * num_beams, cur_len, vocab_size)
+           if use_mem:
+              outputs = model(XMB,size_mem=size_mem)  # (batch_size * num_beams, cur_len, vocab_size)
+           else:
+              outputs = model(XMB)
         else:
-           outputs = model(XMB,update_mem=mem,clear_mem=clear_mem,use_pointer=False, use_scores=False,mem_k=1,use_mem=use_mem)
+           if step != 0:
+              mem = None
+           outputs = model(XMB,update_mem=mem,clear_mem=clear_mem,use_pointer=False, use_scores=False,mem_k=1,use_mem=use_mem,size_mem=size_mem)
         next_token_logits = outputs[0][:, -1, :]  # (batch_size * num_beams, vocab_size)
 
         # do greedy beam search
@@ -400,7 +407,8 @@ for line in teX:
     print(id)
     if use_mem:
        if id not in external_mem.keys():
-          external_mem[id] = [[]]
+          external_mem[id] = []
+          size_mem = 0
     original = line['full_context'][:5]
     save_output = {}
     save_output["storyid"] = id
@@ -419,23 +427,29 @@ for line in teX:
                  XMB[:len(context)] = context 
                  XMB = torch.tensor(XMB,dtype=torch.long).to(device)
                  XMB = XMB.unsqueeze(0)
-                 if use_mem:
+                 if use_mem and size_mem != 0:
                     mem = external_mem[id]
-                    mem = handle_empty(mem[:max_mem_size])
                     mem = torch.LongTensor([pad_rels(r) for r in mem]).unsqueeze(0)
                     if args.decoding == 'topk':
-                       gen = topk(model, XMB,i_1,mem=mem,num_beams=args.beam)
+                       gen = topk(model, XMB,i_1,mem=mem,size_mem=size_mem)
                     else:
-                       gen = beam_search(model, XMB,i_1,mem=mem,num_beams=args.beam)
+                       gen = beam_search(model, XMB,i_1,mem=mem,num_beams=args.beam,size_mem=size_mem,use_mem=use_mem)
                  else:
                     if args.decoding == 'topk':
-                       gen = topk(model, XMB, i_1, num_beams=args.beam)
+                       if use_mem:
+                          gen = topk(model, XMB, i_1,size_mem=size_mem)
+                       else:
+                          gen = topk(model, XMB, i_1)
                     else:
-                       gen = beam_search(model, XMB, i_1,num_beams=args.beam)
+                       if use_mem:
+                          gen = beam_search(model, XMB, i_1,num_beams=args.beam,size_mem=size_mem,use_mem=use_mem)
+                       else:
+                          gen = beam_search(model, XMB, i_1,num_beams=args.beam)
                  gen = [clean_gen(g) for g in gen]
                  if use_mem:
                     mem_gen = gen[0]
                     external_mem[id].append(text_encoder.convert_tokens_to_ids(text_encoder.tokenize(mem_gen)))
+                    size_mem += 1
                  if sent_id + '_' + "generated_relations" in save_output.keys(): 
                     save_output[sent_id + '_' + "generated_relations"].append(gen)
                     save_output[sent_id + '_' + "generated_dims"].append([decoder[dims[d]]] * len(gen))

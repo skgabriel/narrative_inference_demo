@@ -558,7 +558,7 @@ class GPT2MemModel(GPT2PreTrainedModel):
         return self.lm_head
 
     def forward(self, input_ids=None, past=None, attention_mask=None, token_type_ids=None, position_ids=None, head_mask=None, inputs_embeds=None,
-                labels=None, update_mem=None,clear_mem=False, use_pointer=False, use_scores=False,mem_k=1,adaptive=False,use_mem=True):
+                labels=None, update_mem=None,clear_mem=False, use_pointer=False, use_scores=False,mem_k=1,adaptive=False,use_mem=True,size_mem=0):
         if clear_mem == True:
            self.mem = torch.zeros((input_ids.size(0),0,100,self.config.n_embd)).cuda()
         transformer_outputs = self.transformer(input_ids,
@@ -572,21 +572,12 @@ class GPT2MemModel(GPT2PreTrainedModel):
         if update_mem is not None:
            update_mem = self.r_embed(torch.tensor(update_mem))
            self.mem = torch.cat((self.mem,update_mem),dim=1)
-        if use_mem:
+        if use_mem and size_mem != 0:
            mean_mems = torch.mean(self.mem, dim=2)
            mean_context = torch.mean(hidden_states, dim=1)
            scores = torch.stack([self.diff(mean_mems[:,i,:], mean_context) for i in range(mean_mems.size(1))],dim=1)
-           threshold = .04 
-           if adaptive:
-              retrieve = [((scores[i] > threshold).nonzero()) for i in range(scores.size(0))]
-              if retrieve.size(0) == 0:
-                 retrieve = torch.topk(scores,mem_k,dim=1)[1]
-           else:
-              retrieve = torch.topk(scores,mem_k,dim=1)[1]
-           if adaptive:
-              retrieve = []
-           else:
-              retrieve = torch.stack([self.mem[i,retrieve[i],:,:] for i in range(len(retrieve))])
+           retrieve = torch.topk(scores,mem_k,dim=1)[1]
+           retrieve = torch.stack([self.mem[i,retrieve[i],:,:] for i in range(len(retrieve))])
            if mem_k > 1:
               retrieve = torch.mean(retrieve, dim=1)
            else:
