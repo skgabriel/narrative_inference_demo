@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import argparse
 import numpy as np
 from transformers import GPT2Tokenizer
-from src.text_utils import TextEncoder
+from src.text_utils import TextEncoder, fix_malformed
 from src.transformer_models import GPT2Model, GPT2LMHeadModel, GPT2MemModel
 import random
 
@@ -383,6 +383,7 @@ def clean_gen(gen):
        gen = [t for t in gen if t != '<unk>']
     gen = "".join([word.replace("Ġ", " ") for word in gen])
     gen = gen.replace("<|endoftext|>","")
+    gen = fix_malformed(gen)
     return gen
 
 def pad_rels(relation, pad_len=100):
