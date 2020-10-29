@@ -120,3 +120,4 @@ class TextEncoder(object):
     def fix_malformed(rel):
         if '<|' in rel:
             return 'no effect'
+        return rel
