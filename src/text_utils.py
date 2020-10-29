@@ -117,7 +117,7 @@ class TextEncoder(object):
                 texts_tokens.append(text_tokens)
         return texts_tokens
     
-    def fix_malformed(rel):
-        if '<|' in rel:
-            return 'no effect'
-        return rel
+def fix_malformed(rel):
+    if '<|' in rel:
+       return 'no effect'
+    return rel
