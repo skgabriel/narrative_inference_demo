@@ -25,7 +25,13 @@ Para-M (mem): python demo.py --model_path /path/to/modeldir/ --model_type 'mem' 
 
 Citing 
 
-Link: https://arxiv.org/abs/2010.01486
+@article{Gabriel2020ParagraphLevelCT,
+  title={Paragraph-Level Commonsense Transformers with Recurrent Memory},
+  author={Saadia Gabriel and Chandra Bhagavatula and Vered Shwartz and Ronan Le Bras and M. Forbes and Yejin Choi},
+  journal={ArXiv},
+  year={2020},
+  volume={abs/2010.01486}
+}
 
 Note 
 
