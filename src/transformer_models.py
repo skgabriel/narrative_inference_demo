@@ -570,7 +570,7 @@ class GPT2MemModel(GPT2PreTrainedModel):
                                                inputs_embeds=inputs_embeds)
         hidden_states = transformer_outputs[0]
         if update_mem is not None:
-           update_mem = self.r_embed(torch.tensor(update_mem))
+           update_mem = self.r_embed(update_mem)
            self.mem = torch.cat((self.mem,update_mem),dim=1)
         if use_mem and size_mem != 0:
            mean_mems = torch.mean(self.mem, dim=2)
