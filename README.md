@@ -24,7 +24,7 @@ Para-M: python demo.py --model_path /path/to/modeldir/ --model_type 'nomem' --de
 Para-M (mem): python demo.py --model_path /path/to/modeldir/ --model_type 'mem' --decoding beam --beam 10 --source example.jsonl 
 
 Citing 
-
+```
 @article{Gabriel2020ParagraphLevelCT,
 
   title={Paragraph-Level Commonsense Transformers with Recurrent Memory},
@@ -35,9 +35,8 @@ Citing
   
   year={2020},
   
-  volume={abs/2010.01486}
-  
-}
+  volume={abs/2010.01486}}
+  ```
 
 Note 
 
