@@ -19,9 +19,9 @@ The code assumes the input text is in a json-formatted file with the following k
 
 Generation
 
-Para-M: python demo.py --model_path /path/to/modeldir/ --model_type 'nomem' --decoding beam --beam 10 --source example.jsonl
+Para-M: python demo.py --model_dir /path/to/modeldir/ --model_type 'nomem' --decoding beam --beam 10 --source example.jsonl
 
-Para-M (mem): python demo.py --model_path /path/to/modeldir/ --model_type 'mem' --decoding beam --beam 10 --source example.jsonl 
+Para-M (mem): python demo.py --model_dir /path/to/modeldir/ --model_type 'mem' --decoding beam --beam 10 --source example.jsonl 
 
 Citing 
 ```
