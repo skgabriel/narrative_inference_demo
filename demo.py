@@ -123,9 +123,9 @@ for line in teX:
                  else:
                     if args.decoding == 'topk':
                        if use_mem:
-                          gen = topk(model, XMB, i_1,size_mem=size_mem)
+                          gen = topk(model, XMB, i_1,size_mem=size_mem,pad_token_id=encoder['<|PAD|>'])
                        else:
-                          gen = topk(model, XMB, i_1)
+                          gen = topk(model, XMB, i_1,pad_token_id=encoder['<|PAD|>'])
                     else:
                        if use_mem:
                           gen = beam_search(model, XMB, i_1,num_beams=args.beam,size_mem=size_mem,use_mem=use_mem,pad_token_id=encoder['<|PAD|>'], eos_token_ids=[encoder['<|endoftext|>']])
