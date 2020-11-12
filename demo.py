@@ -119,7 +119,7 @@ for line in teX:
                     if args.decoding == 'topk':
                        gen = topk(model, XMB,i_1,mem=mem,size_mem=size_mem)
                     else:
-                       gen = beam_search(model, XMB,i_1,mem=mem,num_beams=args.beam,size_mem=size_mem,use_mem=use_mem)
+                       gen = beam_search(model, XMB,encoder,i_1,mem=mem,num_beams=args.beam,size_mem=size_mem,use_mem=use_mem,pad_token_id=encoder['<|PAD|>'], eos_token_ids=[encoder['<|endoftext|>']])
                  else:
                     if args.decoding == 'topk':
                        if use_mem:
