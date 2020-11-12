@@ -23,7 +23,7 @@ gen_len = 50
 
 def topk(model, encoder, XMB, i, n=1,k=10, mem=None,use_pointer=None,use_scores=None,size_mem=0):
     import copy
-    gen = torch.Tensor([encoder['<|PAD|>']] * gen_len).long().to(device) #torch.zeros((gen_len)).long().to(device)
+    gen = torch.Tensor([encoder['<|PAD|>']] * gen_len).long().to(device=XMB.device) #torch.zeros((gen_len)).long().to(device=XMB.device)
     prob = 0
     for step in range(gen_len):
         if encoder['<|endoftext|>'] in gen:
