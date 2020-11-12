@@ -38,7 +38,7 @@ def topk(model, encoder, XMB, i, n=1,k=10, mem=None,use_pointer=None,use_scores=
         else:
            if step != 0:
               mem = None
-           logits, _ =  model(XMB[:,:i+1+step],update_mem=mem,clear_mem=clear_mem,use_mem=use_mem,size_mem=size_mem)
+           logits, _ =  model(XMB[:,:i+1+step],update_mem=mem,clear_mem=clear_mem,use_mem=(mem != None),size_mem=size_mem)
         logits = torch.nn.functional.softmax(logits, dim=-1)
         logits = logits[:,i+step].squeeze(1)
         values, indices  = logits.sort(descending=True)
