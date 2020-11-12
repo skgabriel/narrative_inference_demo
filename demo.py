@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import argparse
 import numpy as np
 from transformers import GPT2Tokenizer
-from src.text_utils import TextEncoder, fix_malformed
+from src.text_utils import TextEncoder, fix_malformed, set_up_special_tokens
 from src.transformer_models import GPT2Model, GPT2LMHeadModel, GPT2MemModel
 import random
 
@@ -38,58 +38,7 @@ else:
 model_path = os.path.join(args.model_dir, args.model_type)
 device = torch.device(device)
 text_encoder = GPT2Tokenizer.from_pretrained('gpt2')
-encoder = text_encoder.encoder
-decoder = text_encoder.decoder
-
-#sentence-level special tokens
-encoder['<|sent0|>'] = len(encoder)
-decoder[len(decoder)] = '<|sent0|>'
-
-encoder['<|sent1|>'] = len(encoder)
-decoder[len(decoder)] = '<|sent1|>'
-
-encoder['<|sent2|>'] = len(encoder)
-decoder[len(decoder)] = '<|sent2|>'
-
-encoder['<|sent3|>'] = len(encoder)
-decoder[len(decoder)] = '<|sent3|>'
-
-encoder['<|sent4|>'] = len(encoder)
-decoder[len(decoder)] = '<|sent4|>'
-
-sent_ids = [encoder['<|sent0|>'],encoder['<|sent1|>'],encoder['<|sent2|>'],encoder['<|sent3|>'],encoder['<|sent4|>']]
-
-#ATOMIC special tokens
-encoder['<|xNeed|>'] = len(encoder)
-decoder[len(decoder)] = '<|xNeed|>'
-
-encoder['<|xIntent|>'] = len(encoder)
-decoder[len(decoder)] = '<|xIntent|>'
-
-encoder['<|xWant|>'] = len(encoder)
-decoder[len(decoder)] = '<|xWant|>'
-
-encoder['<|oEffect|>'] = len(encoder)
-decoder[len(decoder)] = '<|oEffect|>'
-
-encoder['<|xReact|>'] = len(encoder)
-decoder[len(decoder)] = '<|xReact|>'
-
-encoder['<|oWant|>'] = len(encoder)
-decoder[len(decoder)] = '<|oWant|>'
-
-encoder['<|oReact|>'] = len(encoder)
-decoder[len(decoder)] = '<|oReact|>'
-
-encoder['<|xEffect|>'] = len(encoder)
-decoder[len(decoder)] = '<|xEffect|>'
-
-encoder['<|xAttr|>'] = len(encoder)
-decoder[len(decoder)] = '<|xAttr|>'
-
-encoder['<|PAD|>'] = len(encoder)
-decoder[len(decoder)] = '<|PAD|>'
-
+encoder,decoder = set_up_special_tokens(text_encoder.encoder,text_encoder.decoder)
 text_encoder.encoder = encoder
 text_encoder.decoder = decoder
 n_vocab = len(text_encoder.encoder)
