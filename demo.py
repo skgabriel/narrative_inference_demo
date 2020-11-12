@@ -128,9 +128,9 @@ for line in teX:
                           gen = topk(model, XMB, i_1)
                     else:
                        if use_mem:
-                          gen = beam_search(model, XMB, i_1,num_beams=args.beam,size_mem=size_mem,use_mem=use_mem)
+                          gen = beam_search(model, XMB, i_1,num_beams=args.beam,size_mem=size_mem,use_mem=use_mem,pad_token_id=encoder['<|PAD|>'], eos_token_ids=[encoder['<|endoftext|>']])
                        else:
-                          gen = beam_search(model, XMB, i_1,num_beams=args.beam)
+                          gen = beam_search(model, XMB, i_1,num_beams=args.beam,pad_token_id=encoder['<|PAD|>'], eos_token_ids=[encoder['<|endoftext|>']])
                  gen = [clean_gen(g) for g in gen]
                  if use_mem:
                     mem_gen = gen[0]
