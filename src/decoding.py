@@ -17,8 +17,9 @@
 
 gen_len = 50
 
-def topk(model, XMB,i, n=1,k=10, mem=None,use_pointer=None,use_scores=None,size_mem=0,pad_token_id=0):
+def topk(model, XMB,i, n=1,k=10, mem=None,use_pointer=None,use_scores=None,size_mem=0,pad_token_id=0,encoder=None):
     import copy
+    assert encoder != None
     gen = torch.Tensor([pad_token_id] * gen_len).long().to(device) #torch.zeros((gen_len)).long().to(device)
     prob = 0
     for step in range(gen_len):
@@ -92,10 +93,10 @@ class BeamHypotheses(object):
             ret = self.worst_score >= cur_score
             return ret
         
-def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperature=1, pad_token_id=0, eos_token_ids=[0], length_penalty=1,mem=None,size_mem=0,use_mem=False):
+def beam_search(model, XMB, start_id, num_beams=1, max_length=gen_len, temperature=1, pad_token_id=0, eos_token_ids=[0], length_penalty=1,mem=None,size_mem=0,use_mem=False,encoder=None):
     """ Generate sequences for each example with beam search.
     """
-
+    assert encoder != None
     # generated hypotheses
     vocab_size = len(encoder)
     generated_hyps = [
