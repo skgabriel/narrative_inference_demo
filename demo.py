@@ -39,7 +39,7 @@ else:
 model_path = os.path.join(args.model_dir, args.model_type)
 device = torch.device(device)
 text_encoder = GPT2Tokenizer.from_pretrained('gpt2')
-encoder, decoder = set_up_special_token(text_encoder.encoder, text_encoder.decoder)
+encoder, decoder = set_up_special_tokens(text_encoder.encoder, text_encoder.decoder)
 text_encoder.encoder = encoder
 text_encoder.decoder = decoder
 n_vocab = len(text_encoder.encoder)
