@@ -90,7 +90,6 @@ n_updates = 0
 teX = [json.loads(l) for l in open(args.source).readlines()]
 for line in teX:
     id = line['id']
-    print(id)
     if use_mem:
        if id not in external_mem.keys():
           external_mem[id] = []
