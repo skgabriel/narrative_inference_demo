@@ -1,9 +1,77 @@
+# coding=utf-8
+# Copyright 2018 The Open AI Team Authors and The HuggingFace Inc. team.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import re
 import ftfy
 import json
 import spacy
 
 from tqdm import tqdm
+
+def set_up_special_tokens(encoder,decoder):
+    #sentence-level special tokens
+    encoder['<|sent0|>'] = len(encoder)
+    decoder[len(decoder)] = '<|sent0|>'
+    
+    encoder['<|sent1|>'] = len(encoder)
+    decoder[len(decoder)] = '<|sent1|>'
+    
+    encoder['<|sent2|>'] = len(encoder)
+    decoder[len(decoder)] = '<|sent2|>'
+    
+    encoder['<|sent3|>'] = len(encoder)
+    decoder[len(decoder)] = '<|sent3|>'
+    
+    encoder['<|sent4|>'] = len(encoder)
+    decoder[len(decoder)] = '<|sent4|>'
+    
+    sent_ids = [encoder['<|sent0|>'],encoder['<|sent1|>'],encoder['<|sent2|>'],encoder['<|sent3|>'],encoder['<|sent4|>']]
+    
+    #ATOMIC special tokens
+    encoder['<|xNeed|>'] = len(encoder)
+    decoder[len(decoder)] = '<|xNeed|>'
+    
+    encoder['<|xIntent|>'] = len(encoder)
+    decoder[len(decoder)] = '<|xIntent|>'
+    
+    encoder['<|xWant|>'] = len(encoder)
+    decoder[len(decoder)] = '<|xWant|>'
+    
+    encoder['<|oEffect|>'] = len(encoder)
+    decoder[len(decoder)] = '<|oEffect|>'
+    
+    encoder['<|xReact|>'] = len(encoder)
+    decoder[len(decoder)] = '<|xReact|>'
+    
+    encoder['<|oWant|>'] = len(encoder)
+    decoder[len(decoder)] = '<|oWant|>'
+    
+    encoder['<|oReact|>'] = len(encoder)
+    decoder[len(decoder)] = '<|oReact|>'
+    
+    encoder['<|xEffect|>'] = len(encoder)
+    decoder[len(decoder)] = '<|xEffect|>'
+    
+    encoder['<|xAttr|>'] = len(encoder)
+    decoder[len(decoder)] = '<|xAttr|>'
+    
+    encoder['<|PAD|>'] = len(encoder)
+    decoder[len(decoder)] = '<|PAD|>'
+    
+    return encoder, decoder
+    
 
 def get_pairs(word):
     """
