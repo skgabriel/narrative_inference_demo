@@ -27,15 +27,13 @@ Citing
 ```
 @article{Gabriel2020ParagraphLevelCT,
 
-  title={Paragraph-Level Commonsense Transformers with Recurrent Memory},
+  title={Paragraph-level Commonsense Transformers with Recurrent Memory},
   
   author={Saadia Gabriel and Chandra Bhagavatula and Vered Shwartz and Ronan Le Bras and M. Forbes and Yejin Choi},
   
-  journal={ArXiv},
+  journal={AAAI},
   
-  year={2020},
-  
-  volume={abs/2010.01486}}
+  year={2021}
   ```
 
 Note 
