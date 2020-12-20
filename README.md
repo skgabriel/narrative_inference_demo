@@ -25,7 +25,7 @@ Para-M (mem): python demo.py --model_dir /path/to/modeldir/ --model_type 'mem' -
 
 Citing 
 ```
-@article{Gabriel2020ParagraphLevelCT,
+@article{Gabriel2021ParagraphLevelCT,
 
   title={Paragraph-level Commonsense Transformers with Recurrent Memory},
   
